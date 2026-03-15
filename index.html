@@ -195,6 +195,7 @@
       opacity: 0;
       transform: translateY(12px);
       animation: fadeUp 0.45s ease forwards;
+      scroll-margin-top: 80px;
     }
     .question-block:nth-child(1) { animation-delay: 0.05s; }
     .question-block:nth-child(2) { animation-delay: 0.15s; }
@@ -775,15 +776,21 @@
 
     /** Brief visual hint on unanswered questions */
     function showValidationHint() {
+      let firstUnanswered = null;
       ['q1', 'q2', 'q3'].forEach(name => {
         if (!state.answers[name]) {
           const container = document.getElementById(`${name}-options`);
           container.classList.add('ring-1', 'ring-red-500/50', 'rounded-xl');
+          if (!firstUnanswered) firstUnanswered = container;
           setTimeout(() => {
             container.classList.remove('ring-1', 'ring-red-500/50', 'rounded-xl');
-          }, 1800);
+          }, 2500);
         }
       });
+      // Scroll to first unanswered question on mobile
+      if (firstUnanswered) {
+        firstUnanswered.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
 
     /* ==============================================
