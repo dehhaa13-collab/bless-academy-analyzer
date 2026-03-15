@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Bless Academy — AI-аналіз Instagram</title>
   <meta name="description" content="Безкоштовний AI-аналіз твого Instagram профілю для б'юті-майстрів від Bless Academy. Отримай конкретні рекомендації для зростання." />
 
@@ -39,12 +39,16 @@
 
   <style>
     /* ========== Base & Reset ========== */
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', sans-serif;
       background-color: #0f0f0f;
       color: #ffffff;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding-bottom: env(safe-area-inset-bottom, 0);
     }
 
     /* ========== Screen Transitions ========== */
@@ -295,6 +299,51 @@
     .error-msg {
       animation: fadeUp 0.3s ease forwards;
     }
+
+    /* ========== Mobile Optimizations ========== */
+    @media (max-width: 480px) {
+      /* Compact spacing between questions */
+      #questionsForm.space-y-7 > * + * {
+        margin-top: 1.25rem;
+      }
+      /* Larger touch targets for radio cards */
+      .radio-card {
+        min-height: 48px;
+      }
+      /* Reduce header padding */
+      header { padding-left: 1rem; padding-right: 1rem; }
+      /* Upload zone: less padding on mobile */
+      .upload-zone { padding: 1.5rem; min-height: 220px; }
+      /* Score circle slightly smaller */
+      .score-circle { width: 100px; height: 100px; }
+      .score-circle .text-4xl { font-size: 1.75rem; }
+    }
+
+    /* Safe area for fixed header */
+    @supports (padding-top: env(safe-area-inset-top)) {
+      header {
+        padding-top: calc(1rem + env(safe-area-inset-top));
+      }
+      main {
+        padding-top: calc(5rem + env(safe-area-inset-top));
+      }
+    }
+
+    /* Prevent iOS zoom on input focus */
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+
+    /* Better touch feedback */
+    .btn-gradient:active {
+      transform: scale(0.98);
+    }
+    .radio-card:active {
+      transform: scale(0.98);
+    }
+    .copy-btn:active {
+      transform: scale(0.96);
+    }
   </style>
 </head>
 
@@ -317,7 +366,7 @@
   </header>
 
   <!-- ==================== Main Container ==================== -->
-  <main class="relative z-10 pt-20 pb-12 px-5 sm:px-8 max-w-2xl mx-auto min-h-screen">
+  <main class="relative z-10 pt-20 pb-8 px-4 sm:px-8 max-w-2xl mx-auto min-h-screen">
 
     <!-- ========================================== -->
     <!-- SCREEN 1 — Questions                      -->
@@ -436,11 +485,11 @@
         </div>
 
         <!-- Next button -->
-        <div class="pt-2">
+        <div class="pt-4 pb-2">
           <button
             type="button"
             id="btn-to-upload"
-            class="btn-gradient w-full py-3.5 rounded-xl text-white font-semibold text-sm tracking-wide"
+            class="btn-gradient w-full py-4 rounded-xl text-white font-semibold text-base tracking-wide"
           >
             <span>Далі →</span>
           </button>
