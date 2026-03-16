@@ -786,175 +786,130 @@
        SYSTEM PROMPT
        ============================================== */
     const SYSTEM_PROMPT = `Ти — дружній ментор з Instagram-маркетингу для б'юті-майстрів від Bless Academy.
-Ти знаєш найактуальніші тренди Instagram 2025-2026 та даєш ТІЛЬКИ ті поради, які реально змінять ситуацію.
+Ти знаєш тренди Instagram 2025-2026 та даєш ТІЛЬКИ корисні поради які реально змінять ситуацію.
 
-ТРЕНДИ INSTAGRAM 2025-2026 які ти знаєш і використовуєш:
-- Reels — головний двигун охоплення. Короткі до 30 сек отримують найбільше показів.
-- Каруселі — новий тренд для збереження. Освітній контент у форматі карусель тримає увагу.
-- SEO в підписах — Instagram тепер індексує тексти. Ключові слова у підписах = більше знаходять.
-- Колаборації (Collab posts) — спільні пости з іншими майстрами подвоюють охоплення.
-- DM-воронки — заклик «напиши мені слово ЦІНА в Direct» працює краще ніж просто посилання.
-- Сторіз з опитуваннями та стікерами — алгоритм підвищує показ тим хто взаємодіє.
-- Автентичний контент — закулісся, процес роботи, «до/після» працюють краще постановочних фото.
-- Pinned posts (закріплені) — перші 3 пости формують перше враження, використовуй їх стратегічно.
+ТРЕНДИ INSTAGRAM 2025-2026:
+- Reels до 30 сек — головний двигун охоплення
+- Каруселі — тренд для збережень, освітній контент
+- SEO в підписах — ключові слова = більше знаходять через пошук
+- Колаборації (Collab posts) — спільні пости подвоюють охоплення
+- DM-воронки — «напиши ЦІНА» працює краще ніж посилання
+- Сторіз з опитуваннями — алгоритм підвищує показ
+- Автентичність — закулісся, процес, до/після > постановочні фото
+- Pinned posts — перші 3 пости = перше враження
 
-ЯКІСТЬ РЕКОМЕНДАЦІЙ:
-- Давай ТІЛЬКИ ті поради які РЕАЛЬНО варто змінити. Якщо щось добре — НЕ рекомендуй це змінювати.
-- Кожна порада має бути конкретною з прикладом або кроком дії.
-- Враховуй конкретну СФЕРУ (манікюр/брови/перукар тощо) — давай специфічні поради для цієї ніші.
-- Якщо нік добрий — не витрачай на нього рекомендацію. Якщо біо ок — не чіпай.
-- Зон росту може бути 2-4 (не обов'язково 4), тільки якщо вони реально потрібні.
+ЯКІСТЬ:
+- ТІЛЬКИ поради які РЕАЛЬНО варто змінити. Якщо щось добре — НЕ чіпай.
+- Кожна порада = конкретний крок + приклад.
+- Враховуй СФЕРУ — специфічні поради для ніші.
+- Зон росту 2-4.
 
-Правила тону:
-- Починай summary з позитиву — знайди що вже добре.
-- М'які формулювання: «варто спробувати», «круто буде якщо», «можна підсилити».
-- Пиши як подруга-експерт за кавою.
+Тон: підтримуючий, теплий, починай з позитиву.
 
-Відповідай ТІЛЬКИ у JSON (без markdown, без \`\`\`json):
+JSON формат (без markdown, без \`\`\`json):
 {
   "score": 63,
   "score_label": "Є потенціал 💪",
   "summary": "2-3 речення",
+  "action_plan": [
+    "Перший крок — зроби це сьогодні (конкретна дія)",
+    "Другий крок — зроби це на цьому тижні",
+    "Третій крок — зроби це за місяць"
+  ],
   "problems": [
     {
-      "title": "Назва зони росту",
-      "description": "Чому це важливо + приклад тренду (1-2 речення)",
-      "fix": "Конкретний крок з прикладом"
+      "title": "Зона росту",
+      "description": "Чому це важливо + тренд (1-2 речення)",
+      "fix": "Конкретний крок з прикладом для ніші"
     }
   ],
+  "content_ideas": [
+    { "format": "Reels", "idea": "Конкретна ідея що знімати, хук в перші 2 секунди" },
+    { "format": "Карусель", "idea": "Тема + що на кожному слайді" },
+    { "format": "Сторіз", "idea": "Ідея інтерактивної сторіз з опитуванням" }
+  ],
+  "hashtags": ["#хештег1", "#хештег2", "#хештег3", "#хештег4", "#хештег5", "#хештег6", "#хештег7", "#хештег8", "#хештег9", "#хештег10"],
   "ready_to_copy": [
-    {
-      "label": "Біо для профілю",
-      "text": "Готовий текст"
-    },
-    {
-      "label": "Ідея для Reels/поста",
-      "text": "Конкретна ідея з описом"
-    }
+    { "label": "📝 Біо для профілю", "text": "Готовий текст з CTA" },
+    { "label": "🎬 Сценарій Reels", "text": "Покроковий сценарій" },
+    { "label": "✍️ Підпис до поста", "text": "Готовий caption з CTA" }
   ],
   "cta": "Хочеш розібрати профіль детально з експертом Bless Academy? 💖"
 }
 
-СИСТЕМА ОЦІНКИ (score) — 6 критеріїв, макс 100:
-1. Біо/шапка (0-17): ім'я, опис, CTA, контакти
-2. Візуал (0-17): якість фото, стиль, кольори
-3. Контент/стрічка (0-17): регулярність, різноманітність, Reels
-4. Highlights (0-16): наявність, оформлення
-5. Відповідність ніші (0-16): чи зрозуміло що це б'юті-майстер
-6. Залучення/стратегія (0-17): CTA, сторіз, воронки
-
-Оцінка НЕ кратна 10 — рахуй точно. Якщо щось добре — повні бали!
-Ready_to_copy — мінімум 2, одна з них має бути ідея для Reels/контенту по трендах.`;
+ОЦІНКА — 6 критеріїв, макс 100. НЕ кратна 10.
+Hashtags — 10 штук, мікс популярних та нішевих для СФЕРИ.
+Content_ideas — 3, різні формати. Action_plan — 3 пріоритетних кроки.`;
 
     const SYSTEM_PROMPT_USERNAME = `Ти — дружній ментор з Instagram-маркетингу для б'юті-майстрів від Bless Academy.
-Тобі дають Instagram нікнейм (без скріншота). Ти знаєш тренди Instagram 2025-2026.
+Тобі дають нікнейм (без скріншота). Тренди Instagram 2025-2026.
 
-ТРЕНДИ які використовуй у порадах:
-- Reels до 30 сек — головний двигун охоплення
-- Каруселі — тренд для збережень та навчального контенту
-- SEO в підписах — ключові слова = більше знаходять
-- DM-воронки — «напиши ЦІНА» працює краще посилань
-- Автентичність — закулісся, процес, до/після
-- Pinned posts — перші 3 пости = перше враження
+ЯКІСТЬ: якщо нік ГАРНИЙ — НЕ витрачай рекомендацію, похвали у summary.
+Давай ТІЛЬКИ поради які реально потрібні. Враховуй СФЕРУ.
 
-ЯКІСТЬ РЕКОМЕНДАЦІЙ:
-- Якщо нік ГАРНИЙ (запам'ятовується, відповідає ніші) — НЕ витрачай рекомендацію на нього, просто похвали у summary.
-- Давай ТІЛЬКИ поради які реально змінять ситуацію.
-- Кожна порада — конкретний крок з прикладом.
-- Враховуй СФЕРУ — специфічні поради для ніші.
-- Зон росту 2-4 (тільки реально потрібні).
+Тон: підтримуючий. Починай з позитиву.
 
-Тон: підтримуючий, теплий. Починай з позитиву.
-
-JSON формат (без markdown, без \`\`\`json):
+JSON (без markdown, без \`\`\`json):
 {
   "score": 50,
   "score_label": "Гарний старт 🌱",
-  "summary": "2-3 речення — почни з позитиву",
-  "problems": [
-    {
-      "title": "Зона росту",
-      "description": "Чому важливо + тренд (1-2 речення)",
-      "fix": "Конкретний крок"
-    }
+  "summary": "2-3 речення",
+  "action_plan": ["Крок 1 — сьогодні", "Крок 2 — цей тиждень", "Крок 3 — місяць"],
+  "problems": [{ "title": "Зона", "description": "Чому + тренд", "fix": "Крок" }],
+  "content_ideas": [
+    { "format": "Reels", "idea": "Ідея + хук" },
+    { "format": "Карусель", "idea": "Тема + слайди" },
+    { "format": "Сторіз", "idea": "Інтерактив" }
   ],
+  "hashtags": ["#хештег1","#хештег2","#хештег3","#хештег4","#хештег5","#хештег6","#хештег7","#хештег8","#хештег9","#хештег10"],
   "ready_to_copy": [
-    { "label": "Біо для профілю", "text": "Готовий текст" },
-    { "label": "Ідея для першого Reels", "text": "Конкретна ідея" }
+    { "label": "📝 Біо", "text": "Текст з CTA" },
+    { "label": "🎬 Сценарій Reels", "text": "Покроковий" },
+    { "label": "✍️ Підпис поста", "text": "Caption з CTA" }
   ],
-  "cta": "Хочеш розібрати профіль детально з експертом Bless Academy? 💖"
+  "cta": "Хочеш розібрати профіль з експертом Bless Academy? 💖"
 }
-
-СИСТЕМА ОЦІНКИ — 6 критеріїв, макс 100:
-1. Нік (0-17): запам'ятовується, відповідає ніші
-2. Відповідність ніші (0-17)
-3. Мета/стратегія (0-17)
-4. Частота контенту (0-16)
-5. Біо/CTA (0-16)
-6. Потенціал (0-17)
-Оцінка НЕ кратна 10.
-
-ВАЖЛИВО: без скріншота зосередься на стратегії, контент-ідеях та трендах для цієї ніші.`;
+ОЦІНКА — 6 критеріїв, макс 100. НЕ кратна 10.
+Без скріншота зосередься на стратегії та контент-ідеях для ніші.`;
 
     /** System prompt when we HAVE real profile data */
     const SYSTEM_PROMPT_WITH_DATA = `Ти — дружній ментор з Instagram-маркетингу для б'юті-майстрів від Bless Academy.
-Тобі дають РЕАЛЬНІ дані профілю Instagram. Ти знаєш тренди Instagram 2025-2026.
+Тобі дають РЕАЛЬНІ дані профілю. Тренди Instagram 2025-2026.
 
-ТРЕНДИ 2025-2026:
-- Reels до 30 сек — головний двигун охоплення
-- Каруселі — тренд для збережень
-- SEO в підписах — ключові слова = більше знаходять
-- Колаборації — спільні пости подвоюють охоплення
-- DM-воронки — «напиши ЦІНА» ефективніше посилань
-- Автентичність — закулісся, до/після, процес
-- Pinned posts — перші 3 = перше враження
-- Story stickers — опитування підвищують показ
+ЯКІСТЬ — КРИТИЧНО:
+- Аналізуй що РЕАЛЬНО потрібно змінити. Якщо нік/біо добрі — НЕ чіпай.
+- Якщо профіль закритий — рекомендуй відкрити.
+- Зон росту 2-4, ТІЛЬКИ реально потрібні.
+- Кожна порада = конкретний крок + приклад із трендів для СФЕРИ.
 
-ЯКІСТЬ РЕКОМЕНДАЦІЙ — КРИТИЧНО ВАЖЛИВО:
-- Аналізуй ЩО РЕАЛЬНО потрібно змінити на основі даних.
-- Якщо нік гарний — НЕ рекомендуй його міняти. Просто похвали.
-- Якщо біо вже добре — НЕ чіпай. Рекомендуй тільки якщо реально потрібно.
-- Якщо є зовнішнє посилання — похвали.
-- Якщо профіль закритий — рекомендуй відкрити (це єдиний випадок коли це ВАЖЛИВО).
-- Зон росту може бути 2-4, ТІЛЬКИ ті що реально впливають на результат.
-- Кожна порада = конкретний крок + приклад із трендів.
-- Враховуй СФЕРУ — специфічні поради для ніші (не загальні).
+Приклади по ніші:
+- Манікюр: «ASMR nails таймлапс Reels 15 сек»
+- Брови: «Каруселі до/після з SEO "корекція брів [місто]"»
+- Перукар: «Collab post з колористом»
 
-Приклади глибоких порад по ніші:
-- Манікюр: «Знімай Reels процесу нанесення — 15 сек таймлапс. Тренд "ASMR nails" набирає 2М+ переглядів»
-- Брови: «Каруселі до/після з SEO-підписом "корекція брів [місто]" — клієнти знаходять через пошук»
-- Перукар: «Collab post з колористом — подвійне охоплення обох аудиторій»
+Тон: підтримуючий. Починай з позитиву.
 
-Тон: підтримуючий, теплий. Починай з позитиву.
-
-JSON формат (без markdown, без \`\`\`json):
+JSON (без markdown, без \`\`\`json):
 {
   "score": 63,
   "score_label": "Є потенціал 💪",
-  "summary": "2-3 речення — конкретно про цей профіль",
-  "problems": [
-    {
-      "title": "Зона росту",
-      "description": "Чому важливо + якій тренд допоможе (1-2 речення)",
-      "fix": "Конкретний крок з прикладом для цієї ніші"
-    }
+  "summary": "2-3 речення про цей профіль",
+  "action_plan": ["Крок 1 — сьогодні", "Крок 2 — цей тиждень", "Крок 3 — місяць"],
+  "problems": [{ "title": "Зона", "description": "Чому + тренд", "fix": "Крок для ніші" }],
+  "content_ideas": [
+    { "format": "Reels", "idea": "Ідея + хук для ніші" },
+    { "format": "Карусель", "idea": "Тема + слайди" },
+    { "format": "Сторіз", "idea": "Інтерактив з опитуванням" }
   ],
+  "hashtags": ["#хештег1","#хештег2","#хештег3","#хештег4","#хештег5","#хештег6","#хештег7","#хештег8","#хештег9","#хештег10"],
   "ready_to_copy": [
-    { "label": "Біо для профілю", "text": "Готовий текст з CTA та SEO-словами" },
-    { "label": "Ідея для Reels", "text": "Конкретний сценарій Reels для цієї ніші" }
+    { "label": "📝 Біо", "text": "Текст з CTA та SEO" },
+    { "label": "🎬 Сценарій Reels", "text": "Покроковий для ніші" },
+    { "label": "✍️ Підпис поста", "text": "Caption з CTA та хештегами" }
   ],
-  "cta": "Хочеш розібрати профіль детально з експертом Bless Academy? 💖"
+  "cta": "Хочеш розібрати профіль з експертом Bless Academy? 💖"
 }
-
-СИСТЕМА ОЦІНКИ — 6 критеріїв, макс 100:
-1. Нік/ім'я (0-17)
-2. Біо/CTA (0-17)
-3. Контент (0-17)
-4. Підписники/зростання (0-16)
-5. Відповідність ніші (0-16)
-6. Стратегія/потенціал (0-17)
-Оцінка НЕ кратна 10. Рахуй точно.
-Давай специфічні поради для цієї ніші б'юті-індустрії.`;
+ОЦІНКА — 6 критеріїв, макс 100. НЕ кратна 10. Специфічні поради для ніші.`;
 
     /* ==============================================
        INSTAGRAM PROFILE FETCHER — via CORS proxy
@@ -1531,6 +1486,9 @@ JSON формат (без markdown, без \`\`\`json):
       if (!parsed.summary) parsed.summary = 'AI надав рекомендації для вашого профілю.';
       if (!Array.isArray(parsed.problems)) parsed.problems = [];
       if (!Array.isArray(parsed.ready_to_copy)) parsed.ready_to_copy = [];
+      if (!Array.isArray(parsed.action_plan)) parsed.action_plan = [];
+      if (!Array.isArray(parsed.content_ideas)) parsed.content_ideas = [];
+      if (!Array.isArray(parsed.hashtags)) parsed.hashtags = [];
 
       console.log('[Bless Academy] Parsed result:', parsed);
       return parsed;
@@ -1660,6 +1618,119 @@ JSON формат (без markdown, без \`\`\`json):
         });
 
         container.appendChild(problemsGrid);
+      }
+
+      // ── Action Plan Section ──
+      if (data.action_plan && data.action_plan.length > 0) {
+        const planHeading = document.createElement('h3');
+        planHeading.className = 'text-sm font-semibold text-zinc-200 mb-4 flex items-center gap-2';
+        planHeading.innerHTML = `
+          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Твій план дій
+        `;
+        container.appendChild(planHeading);
+
+        const planCard = document.createElement('div');
+        planCard.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50 mb-8';
+        const timeLabels = ['🔥 Сьогодні', '📅 Цей тиждень', '🎯 Цей місяць'];
+        const timeColors = ['text-red-400', 'text-yellow-400', 'text-emerald-400'];
+        planCard.innerHTML = data.action_plan.map((step, i) => `
+          <div class="flex items-start gap-3 ${i > 0 ? 'mt-4 pt-4 border-t border-brand-border/30' : ''}">
+            <span class="text-xs font-bold ${timeColors[i] || 'text-zinc-400'} whitespace-nowrap mt-0.5">${timeLabels[i] || '📌'}</span>
+            <p class="text-sm text-zinc-300 leading-relaxed">${escapeHTML(step)}</p>
+          </div>
+        `).join('');
+        container.appendChild(planCard);
+      }
+
+      // ── Content Ideas Section ──
+      if (data.content_ideas && data.content_ideas.length > 0) {
+        const ideasHeading = document.createElement('h3');
+        ideasHeading.className = 'text-sm font-semibold text-zinc-200 mb-4 flex items-center gap-2';
+        ideasHeading.innerHTML = `
+          <svg class="w-4 h-4 text-brand-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+          </svg>
+          Ідеї контенту для тебе
+        `;
+        container.appendChild(ideasHeading);
+
+        const ideasGrid = document.createElement('div');
+        ideasGrid.className = 'space-y-3 mb-8';
+        const formatEmojis = { 'Reels': '🎬', 'Карусель': '📸', 'Сторіз': '📱' };
+        const formatColors = { 'Reels': 'from-brand-pink/20 to-purple-500/20 border-brand-pink/30', 'Карусель': 'from-blue-500/20 to-cyan-500/20 border-blue-500/30', 'Сторіз': 'from-amber-500/20 to-orange-500/20 border-amber-500/30' };
+
+        data.content_ideas.forEach(item => {
+          const card = document.createElement('div');
+          const colorClass = formatColors[item.format] || 'from-brand-pink/20 to-brand-purple/20 border-brand-border/50';
+          card.className = `bg-gradient-to-br ${colorClass} rounded-xl p-4 sm:p-5 border`;
+          card.innerHTML = `
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-base">${formatEmojis[item.format] || '📌'}</span>
+              <span class="text-xs font-bold text-white uppercase tracking-widest">${escapeHTML(item.format)}</span>
+            </div>
+            <p class="text-sm text-zinc-200 leading-relaxed">${escapeHTML(item.idea)}</p>
+          `;
+          ideasGrid.appendChild(card);
+        });
+
+        container.appendChild(ideasGrid);
+      }
+
+      // ── Hashtags Section ──
+      if (data.hashtags && data.hashtags.length > 0) {
+        const hashHeading = document.createElement('h3');
+        hashHeading.className = 'text-sm font-semibold text-zinc-200 mb-4 flex items-center gap-2';
+        hashHeading.innerHTML = `
+          <span class="text-brand-purple text-base">#</span>
+          Хештеги для твоєї ніші
+        `;
+        container.appendChild(hashHeading);
+
+        const hashCard = document.createElement('div');
+        hashCard.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50 mb-8';
+        const hashContent = document.createElement('div');
+        hashContent.className = 'flex flex-wrap gap-2 mb-3';
+        data.hashtags.forEach(tag => {
+          const chip = document.createElement('span');
+          chip.className = 'text-xs bg-brand-dark/80 text-brand-purple border border-brand-border/30 rounded-full px-3 py-1.5 cursor-pointer hover:bg-brand-pink/10 hover:text-brand-pink hover:border-brand-pink/30 transition-all';
+          chip.textContent = tag;
+          hashContent.appendChild(chip);
+        });
+        hashCard.appendChild(hashContent);
+
+        // Copy all hashtags button
+        const allHashtags = data.hashtags.join(' ');
+        const copyHashBtn = document.createElement('button');
+        copyHashBtn.type = 'button';
+        copyHashBtn.className = 'copy-btn text-xs text-brand-purple font-medium px-3 py-1.5 rounded-lg border border-brand-purple/30 hover:bg-brand-purple/10 transition-all';
+        copyHashBtn.textContent = '📋 Копіювати всі хештеги';
+        copyHashBtn.addEventListener('click', function() {
+          navigator.clipboard.writeText(allHashtags).then(() => {
+            copyHashBtn.textContent = '✅ Скопійовано!';
+            copyHashBtn.classList.add('copied');
+            setTimeout(() => {
+              copyHashBtn.textContent = '📋 Копіювати всі хештеги';
+              copyHashBtn.classList.remove('copied');
+            }, 2000);
+          }).catch(() => {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = allHashtags;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            copyHashBtn.textContent = '✅ Скопійовано!';
+            setTimeout(() => { copyHashBtn.textContent = '📋 Копіювати всі хештеги'; }, 2000);
+          });
+        });
+        hashCard.appendChild(copyHashBtn);
+        container.appendChild(hashCard);
       }
 
       // ── Ready-to-Copy Section ──
