@@ -887,6 +887,150 @@
 Зон росту 3-4. Ready_to_copy — мінімум 2 пункти.
 ВАЖЛИВО: без скріншота ти не бачиш профіль, тому зосередься на аналізі ніку, стратегії та порадах на основі відповідей.`;
 
+    /** System prompt when we HAVE real profile data */
+    const SYSTEM_PROMPT_WITH_DATA = `Ти — дружній ментор з Instagram-маркетингу для б'юті-майстрів від Bless Academy.
+Тобі дають РЕАЛЬНІ дані професійного профілю Instagram (біо, кількість підписників, постів, тощо).
+Твій стиль — підтримуючий, теплий, рекомендаційний. Ти НЕ критикуєш, а підказуєш.
+
+Ти отримаєш реальні дані профілю — використовуй їх для детального аналізу:
+- Оціни біо: чи зрозуміло що це б'юті-майстер, чи є CTA, контакти, посилання
+- Оціни кількість підписників відносно кількості постів — чи є зростання
+- Оціни нік — чи запам'ятовується, чи відповідає ніші
+- Якщо є зовнішнє посилання — похвали або порекомендуй додати
+- Якщо профіль закритий — порекомендуй відкрити для бізнесу
+
+Правила тону:
+- Починай з позитиву, потім м'яко підказуй зони росту.
+- Використовуй: «рекомендуємо», «варто спробувати», «круто буде якщо», «можна підсилити».
+- Уникай: «погано», «помилка», «неправильно», «проблема».
+
+Відповідай ТІЛЬКИ у такому JSON форматі (без зайвого тексту, без markdown, без \`\`\`json обгортки):
+{
+  "score": 63,
+  "score_label": "Є потенціал 💪",
+  "summary": "2-3 речення — почни з позитиву, потім м'яко вкажи на зони росту",
+  "problems": [
+    {
+      "title": "Назва зони росту",
+      "description": "М'яке пояснення (1-2 речення)",
+      "fix": "Конкретна дружня рекомендація"
+    }
+  ],
+  "ready_to_copy": [
+    {
+      "label": "Біо для профілю",
+      "text": "Готовий текст який можна скопіювати і вставити"
+    },
+    {
+      "label": "Ідея для першого поста",
+      "text": "Готовий текст поста"
+    }
+  ],
+  "cta": "Хочеш розібрати профіль детально з експертом Bless Academy? 💖"
+}
+
+СИСТЕМА ОЦІНКИ (score) — рахуй за 6 критеріїв, кожен до 17 балів (макс 100):
+1. Нік/ім'я профілю (0-17): запам'ятовується, відповідає ніші
+2. Біо/CTA (0-17): є опис послуг, контакти, заклик до дії
+3. Кількість контенту (0-17): достатньо постів для цього рівня
+4. Підписники/зростання (0-16): відношення підписників до постів
+5. Відповідність ніші (0-16): чи зрозуміло що це б'юті-майстер
+6. Стратегія/потенціал (0-17): зовнішнє посилання, відкритий профіль
+
+Оцінка НЕ повинна бути кратною 10. Рахуй точно — наприклад 57, 63, 71, 84.
+Зон росту 3-4. Ready_to_copy — мінімум 2 пункти.
+Враховуй сферу роботи — давай специфічні поради для цієї ніші б'юті-індустрії.`;
+
+    /* ==============================================
+       INSTAGRAM PROFILE FETCHER — via CORS proxy
+       ============================================== */
+    async function fetchInstagramProfile(username) {
+      const cleanUsername = username.replace(/^@/, '').trim();
+      const igUrl = `https://www.instagram.com/${cleanUsername}/`;
+      
+      // Try multiple CORS proxies for reliability
+      const proxies = [
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(igUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(igUrl)}`,
+      ];
+
+      let html = null;
+      for (const proxyUrl of proxies) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+          const res = await fetch(proxyUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          if (res.ok) {
+            html = await res.text();
+            if (html && html.includes('instagram')) break;
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (!html) throw new Error('Could not fetch Instagram page');
+
+      // Parse OG meta tags
+      const getMetaContent = (property) => {
+        const regex = new RegExp(`<meta[^>]*(?:property|name)=["']${property}["'][^>]*content=["']([^"']*)["']`, 'i');
+        const altRegex = new RegExp(`<meta[^>]*content=["']([^"']*)["'][^>]*(?:property|name)=["']${property}["']`, 'i');
+        const match = html.match(regex) || html.match(altRegex);
+        return match ? match[1] : null;
+      };
+
+      const ogDescription = getMetaContent('og:description') || '';
+      const ogTitle = getMetaContent('og:title') || '';
+
+      // Parse follower/following/post counts from og:description
+      // Format: "1,234 Followers, 567 Following, 89 Posts - See Instagram photos..."
+      const countsMatch = ogDescription.match(/([\d,.]+[KMkm]?)\s*Followers?,?\s*([\d,.]+[KMkm]?)\s*Following,?\s*([\d,.]+[KMkm]?)\s*Posts?/i);
+      
+      // Try to extract bio from the description (after "- " separator)
+      let bio = '';
+      const bioParts = ogDescription.split(' - ');
+      if (bioParts.length > 1) {
+        bio = bioParts.slice(1).join(' - ').replace(/See Instagram photos and videos from.*$/i, '').trim();
+      }
+
+      // Try to find JSON-LD data for more info
+      let isVerified = false;
+      let isPrivate = false;
+      let externalUrl = '';
+
+      // Check for private/verified indicators in the page
+      if (html.includes('"is_private":true')) isPrivate = true;
+      if (html.includes('"is_verified":true')) isVerified = true;
+      
+      // Try to find external URL
+      const extUrlMatch = html.match(/"external_url":"(https?:[^"]+)"/);
+      if (extUrlMatch) externalUrl = extUrlMatch[1].replace(/\\u0026/g, '&').replace(/\\\//g, '/');
+
+      // Extract display name from og:title ("Name (@username)")
+      const nameMatch = ogTitle.match(/^(.+?)\s*\(@/);
+      const displayName = nameMatch ? nameMatch[1].trim() : '';
+
+      const result = {
+        username: cleanUsername,
+        displayName,
+        bio: bio || null,
+        followers: countsMatch ? countsMatch[1] : null,
+        following: countsMatch ? countsMatch[2] : null,
+        posts: countsMatch ? countsMatch[3] : null,
+        isVerified,
+        isPrivate,
+        externalUrl: externalUrl || null,
+      };
+
+      // Validate we got at least some data
+      if (!result.followers && !result.bio && !result.displayName) {
+        throw new Error('No useful data extracted');
+      }
+
+      return result;
+    }
+
     /* ==============================================
        CONFIG — runtime assembly
        ============================================== */
@@ -1260,12 +1404,41 @@
           },
         ];
       } else {
-        // === Username mode: text-only ===
+        // === Username mode: try to fetch real profile data ===
         const username = parseUsername(state.igUsername);
-        const fullText = `Instagram нік: @${username}\n\n${userText}`;
+        let profileData = null;
+
+        try {
+          profileData = await fetchInstagramProfile(username);
+          console.log('[Bless Academy] Instagram profile data:', profileData);
+        } catch (e) {
+          console.log('[Bless Academy] Could not fetch profile, using username only:', e.message);
+        }
+
+        let fullText;
+        if (profileData) {
+          fullText = [
+            `Instagram нік: @${username}`,
+            '',
+            '=== ДАНІ ПРОФІЛЮ (реальні, отримані зі сторінки) ===',
+            profileData.displayName ? `Ім'я: ${profileData.displayName}` : '',
+            profileData.bio ? `Біо: ${profileData.bio}` : 'Біо: (пусте)',
+            profileData.followers ? `Підписники: ${profileData.followers}` : '',
+            profileData.following ? `Підписки: ${profileData.following}` : '',
+            profileData.posts ? `Публікацій: ${profileData.posts}` : '',
+            profileData.isVerified ? 'Верифікований: так ✓' : '',
+            profileData.isPrivate ? 'Закритий профіль: так 🔒' : '',
+            profileData.externalUrl ? `Зовнішнє посилання: ${profileData.externalUrl}` : 'Зовнішнє посилання: немає',
+            '=== КІНЕЦЬ ДАНИХ ПРОФІЛЮ ===',
+            '',
+            userText,
+          ].filter(Boolean).join('\n');
+        } else {
+          fullText = `Instagram нік: @${username}\n(Не вдалося отримати дані профілю — аналізуй на основі ніку та відповідей)\n\n${userText}`;
+        }
 
         messages = [
-          { role: 'system', content: SYSTEM_PROMPT_USERNAME },
+          { role: 'system', content: profileData ? SYSTEM_PROMPT_WITH_DATA : SYSTEM_PROMPT_USERNAME },
           { role: 'user', content: fullText },
         ];
       }
