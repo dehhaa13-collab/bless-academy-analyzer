@@ -547,7 +547,7 @@ els.btnBackToQuestions.addEventListener('click', () => {
    ============================================== */
 els.btnBook.addEventListener('click', () => {
   trackEvent('book_cta_clicked');
-  window.open('https://calendar.app.google/Ys8pd5UMBWD3jRK66', '_blank');
+  window.open('https://calendar.app.google/TyJJjzQivTRupYm38', '_blank');
 });
 
 /* ==============================================
