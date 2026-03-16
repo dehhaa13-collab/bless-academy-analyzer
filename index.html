@@ -350,9 +350,6 @@
       header { padding-left: 1rem; padding-right: 1rem; }
       /* Upload zone: less padding on mobile */
       .upload-zone { padding: 1.5rem; min-height: 220px; }
-      /* Score circle slightly smaller */
-      .score-circle { width: 100px; height: 100px; }
-      .score-circle .text-4xl { font-size: 1.75rem; }
     }
 
     /* Safe area for fixed header */
@@ -678,7 +675,7 @@
           <div class="space-y-2">
             <div class="flex items-start gap-2">
               <span class="text-brand-pink text-xs mt-0.5">✦</span>
-              <p class="text-xs text-zinc-400">AI проаналізує нік, відповідність ніші та дасть рекомендації</p>
+              <p class="text-xs text-zinc-400">AI отримає дані профілю (біо, підписники, пости) та дасть детальний аналіз</p>
             </div>
             <div class="flex items-start gap-2">
               <span class="text-brand-pink text-xs mt-0.5">✦</span>
@@ -1303,11 +1300,17 @@
     /* ==============================================
        SCREEN 2 → SCREEN 3  (Отримати аналіз)
        ============================================== */
+    let _isAnalyzing = false;
     async function runAnalysis() {
+      // Prevent double-clicks
+      if (_isAnalyzing) return;
+
       // Validate based on mode
       if (state.inputMode === 'screenshot' && !state.uploadedFile) return;
       if (state.inputMode === 'username' && state.igUsername.length < 2) return;
 
+      _isAnalyzing = true;
+      els.btnAnalyze.disabled = true;
       hideError();
       navigateTo('screen-loading');
       trackEvent('analysis_started');
@@ -1329,6 +1332,9 @@
         setTimeout(() => {
           showError(err.message || 'Помилка: спробуй ще раз');
         }, 400);
+      } finally {
+        _isAnalyzing = false;
+        updateAnalyzeButton();
       }
     }
 
@@ -1480,21 +1486,33 @@
       try {
         // Try direct parse first
         parsed = JSON.parse(content);
-      } catch (e) {
-        // Try to extract JSON from markdown code block
-        const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-        if (jsonMatch) {
-          parsed = JSON.parse(jsonMatch[1].trim());
-        } else {
-          // Try to find JSON object in the text
-          const braceMatch = content.match(/\{[\s\S]*\}/);
-          if (braceMatch) {
-            parsed = JSON.parse(braceMatch[0]);
+      } catch (e1) {
+        try {
+          // Try to extract JSON from markdown code block
+          const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+          if (jsonMatch) {
+            parsed = JSON.parse(jsonMatch[1].trim());
           } else {
-            throw new Error('AI повернув некоректний формат. Спробуй ще раз.');
+            // Try to find JSON object in the text
+            const braceMatch = content.match(/\{[\s\S]*\}/);
+            if (braceMatch) {
+              parsed = JSON.parse(braceMatch[0]);
+            } else {
+              throw new Error('No JSON found');
+            }
           }
+        } catch (e2) {
+          console.error('[Bless Academy] JSON parse failed:', e2, '\nContent:', content);
+          throw new Error('AI повернув некоректний формат. Спробуй ще раз.');
         }
       }
+
+      // Validate required fields
+      if (typeof parsed.score !== 'number') parsed.score = 50;
+      if (!parsed.score_label) parsed.score_label = parsed.score >= 70 ? 'Гарний результат 💪' : 'Є потенціал 🌱';
+      if (!parsed.summary) parsed.summary = 'AI надав рекомендації для вашого профілю.';
+      if (!Array.isArray(parsed.problems)) parsed.problems = [];
+      if (!Array.isArray(parsed.ready_to_copy)) parsed.ready_to_copy = [];
 
       console.log('[Bless Academy] Parsed result:', parsed);
       return parsed;
