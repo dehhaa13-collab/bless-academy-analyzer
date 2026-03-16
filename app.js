@@ -772,7 +772,7 @@ function renderResults(data) {
     }
     
     // JS animation for the numbers
-    const duration = 3500;
+    const duration = 5000;
     const start = performance.now();
     
     function tick(now) {
