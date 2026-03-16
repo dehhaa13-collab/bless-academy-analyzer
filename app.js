@@ -763,7 +763,11 @@ function renderResults(data) {
   requestAnimationFrame(() => {
     const progressEl = document.getElementById('score-progress');
     const counterEl = document.getElementById('score-counter');
-    if (progressEl) progressEl.style.strokeDashoffset = offset;
+    
+    // Small delay so CSS transition kicks in smoothly
+    setTimeout(() => {
+      if (progressEl) progressEl.style.strokeDashoffset = offset;
+    }, 50);
     
     const duration = 2000;
     const start = performance.now();
@@ -772,24 +776,22 @@ function renderResults(data) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
       
-      // Fast random numbers at the beginning, then slow down to target
       if (progress < 0.7) {
         // "Slot machine" phase: rapid random updates
-        if (counterEl) counterEl.textContent = Math.floor(Math.random() * 40) + 40; // Random 40-80
+        if (counterEl) counterEl.textContent = Math.floor(Math.random() * 40) + 40;
       } else {
         // Easing to the final target
-        const easeProgress = (progress - 0.7) / 0.3; // normalize to 0-1 for the remainder
-        const eased = 1 - Math.pow(1 - easeProgress, 3); // cubic ease out
-        let current = Math.round(score * 0.5 + (score * 0.5) * eased);
-        
-        // Ensure we hit the exact target at the end
-        if (progress === 1) current = score;
-        
+        const easeProgress = (progress - 0.7) / 0.3;
+        const eased = 1 - Math.pow(1 - easeProgress, 3);
+        const current = Math.round(score * 0.5 + (score * 0.5) * eased);
         if (counterEl) counterEl.textContent = current;
       }
       
       if (progress < 1) {
         requestAnimationFrame(tick);
+      } else {
+        // Guarantee exact final value
+        if (counterEl) counterEl.textContent = score;
       }
     }
     requestAnimationFrame(tick);
