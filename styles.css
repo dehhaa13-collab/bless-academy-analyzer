@@ -31,27 +31,35 @@ body {
 .radio-card {
   position: relative;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy transition */
+  transform-origin: center;
 }
 .radio-card:hover {
   border-color: #f472b6 !important;
   background-color: rgba(244, 114, 182, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 114, 182, 0.05);
+}
+.radio-card:active {
+  transform: translateY(0) scale(0.98);
 }
 .radio-card.selected {
   border-color: #f472b6 !important;
   background: linear-gradient(135deg, rgba(244, 114, 182, 0.1), rgba(192, 132, 252, 0.08));
   box-shadow: 0 0 20px rgba(244, 114, 182, 0.1);
+  transform: translateY(-2px);
 }
 .radio-card.selected .radio-dot {
   background: linear-gradient(135deg, #f472b6, #c084fc);
   box-shadow: 0 0 10px rgba(244, 114, 182, 0.5);
+  transform: scale(1.1);
 }
 .radio-dot {
   width: 18px;
   height: 18px;
   border-radius: 50%;
   border: 2px solid #3f3f46;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   flex-shrink: 0;
 }
 
@@ -194,6 +202,25 @@ body {
   border-radius: 14px;
 }
 
+/* ========== Text Shine Animation ========== */
+.text-shine {
+  background: linear-gradient(
+    110deg,
+    #f472b6 10%,
+    #fff 30%,
+    #c084fc 50%,
+    #f472b6 70%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shine 4s linear infinite;
+}
+@keyframes shine {
+  to { background-position: 200% center; }
+}
+
 /* ========== Score Ring ========== */
 .score-ring-container { position: relative; width: 140px; height: 140px; animation: scoreIn 0.6s ease forwards; }
 .score-ring-container svg { transform: rotate(-90deg); width: 140px; height: 140px; }
@@ -233,21 +260,35 @@ body {
 
 /* ========== Result Sections — Premium Glassmorphism ========== */
 .result-section-card {
-  background: linear-gradient(135deg, rgba(30,30,35,0.9), rgba(20,20,25,0.95));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(30,30,35,0.7), rgba(20,20,25,0.85));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 16px;
   padding: 1.25rem;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
+/* Shimmer top border */
 .result-section-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(244,114,182,0.3), rgba(192,132,252,0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(244,114,182,0.4), rgba(192,132,252,0.4), transparent);
+  z-index: 2;
+}
+/* Noise Overlay */
+.result-section-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opactiy='0.1'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: overlay;
 }
 
 /* Section heading */
