@@ -355,6 +355,22 @@
       .upload-zone { padding: 1.5rem; min-height: 220px; }
     }
 
+    /* ========== Results — responsive helpers ========== */
+    /* Prevent horizontal overflow everywhere */
+    main, main * {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    main {
+      overflow-x: hidden;
+    }
+    /* Section text containers — prevent overflow */
+    #resultsContainer {
+      overflow: hidden;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
     /* Safe area for fixed header */
     @supports (padding-top: env(safe-area-inset-top)) {
       header {
@@ -1692,15 +1708,14 @@ JSON (без markdown, без \`\`\`json):
         container.appendChild(hashHeading);
 
         const hashCard = document.createElement('div');
-        hashCard.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50 mb-8 overflow-hidden';
+        hashCard.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50 mb-8';
+        hashCard.style.overflow = 'hidden';
         const hashContent = document.createElement('div');
-        hashContent.className = 'flex flex-wrap gap-2 mb-3';
-        hashContent.style.maxWidth = '100%';
+        hashContent.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;max-width:100%';
         data.hashtags.forEach(tag => {
           const chip = document.createElement('span');
           chip.className = 'text-xs bg-brand-dark/80 text-brand-purple border border-brand-border/30 rounded-full px-3 py-1.5 cursor-pointer hover:bg-brand-pink/10 hover:text-brand-pink hover:border-brand-pink/30 transition-all';
-          chip.style.maxWidth = '100%';
-          chip.style.overflowWrap = 'break-word';
+          chip.style.cssText = 'display:inline-block;max-width:100%;overflow-wrap:break-word;flex-shrink:0';
           chip.textContent = tag;
           hashContent.appendChild(chip);
         });
