@@ -1692,12 +1692,15 @@ JSON (без markdown, без \`\`\`json):
         container.appendChild(hashHeading);
 
         const hashCard = document.createElement('div');
-        hashCard.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50 mb-8';
+        hashCard.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50 mb-8 overflow-hidden';
         const hashContent = document.createElement('div');
         hashContent.className = 'flex flex-wrap gap-2 mb-3';
+        hashContent.style.maxWidth = '100%';
         data.hashtags.forEach(tag => {
           const chip = document.createElement('span');
           chip.className = 'text-xs bg-brand-dark/80 text-brand-purple border border-brand-border/30 rounded-full px-3 py-1.5 cursor-pointer hover:bg-brand-pink/10 hover:text-brand-pink hover:border-brand-pink/30 transition-all';
+          chip.style.maxWidth = '100%';
+          chip.style.overflowWrap = 'break-word';
           chip.textContent = tag;
           hashContent.appendChild(chip);
         });
