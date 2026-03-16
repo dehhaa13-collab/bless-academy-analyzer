@@ -197,6 +197,8 @@
     .question-block:nth-child(2) { animation-delay: 0.15s; }
     .question-block:nth-child(3) { animation-delay: 0.25s; }
     .question-block:nth-child(4) { animation-delay: 0.35s; }
+    .question-block:nth-child(5) { animation-delay: 0.45s; }
+    .question-block:nth-child(6) { animation-delay: 0.55s; }
 
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
@@ -246,34 +248,55 @@
       border-radius: 14px;
     }
 
-    /* ========== Score Circle ========== */
-    .score-circle {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
+    /* ========== Score Ring (SVG-based) ========== */
+    .score-ring-container {
+      position: relative;
+      width: 140px;
+      height: 140px;
+    }
+    .score-ring-container svg {
+      transform: rotate(-90deg);
+      width: 140px;
+      height: 140px;
+    }
+    .score-ring-bg {
+      fill: none;
+      stroke: #2a2a2a;
+      stroke-width: 8;
+    }
+    .score-ring-progress {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      filter: drop-shadow(0 0 6px var(--ring-glow));
+    }
+    .score-ring-value {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: relative;
     }
-    .score-circle::before {
-      content: '';
-      position: absolute;
-      inset: -3px;
-      border-radius: 50%;
-      padding: 3px;
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask-composite: exclude;
-      -webkit-mask-composite: xor;
+    .score-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
     }
-    .score-red::before { background: linear-gradient(135deg, #ef4444, #f97316); }
-    .score-yellow::before { background: linear-gradient(135deg, #f59e0b, #eab308); }
-    .score-green::before { background: linear-gradient(135deg, #22c55e, #10b981); }
-    .score-red { color: #ef4444; }
-    .score-yellow { color: #f59e0b; }
-    .score-green { color: #22c55e; }
+    .score-red { --ring-color: url(#grad-red); --ring-glow: rgba(239,68,68,0.4); color: #ef4444; }
+    .score-yellow { --ring-color: url(#grad-yellow); --ring-glow: rgba(245,158,11,0.4); color: #f59e0b; }
+    .score-green { --ring-color: url(#grad-green); --ring-glow: rgba(34,197,94,0.4); color: #22c55e; }
+    @keyframes scoreIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .score-ring-container { animation: scoreIn 0.6s ease forwards; }
+    @media (max-width: 480px) {
+      .score-ring-container, .score-ring-container svg { width: 120px; height: 120px; }
+      .score-number { font-size: 2rem; }
+    }
 
     /* ========== Copy button ========== */
     .copy-btn {
@@ -531,7 +554,7 @@
         <div class="question-block">
           <p class="text-sm font-semibold mb-3 text-zinc-200">
             <span class="text-brand-pink mr-1.5">05.</span>
-            Що тебе найбільше турбує в твоїй сторінці?
+            Що тебе найбільше турбує в твоїй сторінці? <span class="text-zinc-500 font-normal">(необов'язково)</span>
           </p>
           <textarea
             id="q4-text"
@@ -554,6 +577,7 @@
         </div>
       </form>
     </section>
+    <script>document.getElementById('questionsForm').addEventListener('submit',e=>e.preventDefault());</script>
 
     <!-- ========================================== -->
     <!-- SCREEN 2 — Screenshot / Username           -->
@@ -756,19 +780,26 @@
     /* ==============================================
        SYSTEM PROMPT
        ============================================== */
-    const SYSTEM_PROMPT = `Ти — експерт з Instagram-маркетингу для бьюті-майстрів. 
-Твоє завдання — проаналізувати профіль і дати конкретні, дієві рекомендації.
+    const SYSTEM_PROMPT = `Ти — дружній ментор з Instagram-маркетингу для б'юті-майстрів від Bless Academy.
+Твій стиль — підтримуючий, теплий, рекомендаційний. Ти НЕ критикуєш, а підказуєш як стати ще краще.
+
+Правила тону:
+- Починай summary з чогось позитивного — знайди що вже добре.
+- Замість «проблема» кажи «зона росту» або «що можна покращити».
+- Використовуй м'які формулювання: «рекомендуємо спробувати», «варто звернути увагу», «круто буде якщо», «можна підсилити».
+- Уникай слів: «погано», «помилка», «неправильно», «проблема».
+- Пиши так, ніби ти подруга-експерт яка підказує за кавою.
 
 Відповідай ТІЛЬКИ у такому JSON форматі (без зайвого тексту, без markdown, без \`\`\`json обгортки):
 {
-  "score": 72,
-  "score_label": "Є потенціал",
-  "summary": "2-3 речення загального враження від профілю",
+  "score": 63,
+  "score_label": "Є потенціал 💪",
+  "summary": "2-3 речення — почни з позитиву, потім м'яко вкажи на зони росту",
   "problems": [
     {
-      "title": "Назва проблеми",
-      "description": "Чому це проблема (1-2 речення)",
-      "fix": "Конкретно що зробити"
+      "title": "Назва зони росту (без слова проблема)",
+      "description": "М'яке пояснення чому це важливо покращити (1-2 речення)",
+      "fix": "Конкретна рекомендація що зробити — у дружньому тоні"
     }
   ],
   "ready_to_copy": [
@@ -781,33 +812,50 @@
       "text": "Готовий текст поста"
     }
   ],
-  "cta": "Хочеш розібрати профіль детально з експертом Bless Academy?"
+  "cta": "Хочеш розібрати профіль детально з експертом Bless Academy? 💖"
 }
 
-Аналізуй: шапку профілю, фото, highlights, стиль постів, відповідність цілям та СФЕРІ користувача.
-Враховуй сферу роботи — давай специфічні поради саме для цієї ніші бьюті-індустрії.
-Давай максимально конкретні рекомендації — без води.
-Проблем має бути 3-4. Ready_to_copy — мінімум 2 пункти.`;
+СИСТЕМА ОЦІНКИ (score) — рахуй за 6 критеріїв, кожен до 17 балів (макс 100):
+1. Біо/шапка профілю (0-17): ім'я, опис, CTA, контакти
+2. Аватар та візуал (0-17): якість фото, єдиний стиль, кольори
+3. Стрічка/контент (0-17): регулярність, різноманітність, якість постів
+4. Highlights (0-16): наявність, оформлення, зміст
+5. Відповідність ніші (0-16): чи зрозуміло що це б'юті-майстер
+6. Залучення/стратегія (0-17): CTA в постах, сторіз, взаємодія з аудиторією
 
-    const SYSTEM_PROMPT_USERNAME = `Ти — експерт з Instagram-маркетингу для бьюті-майстрів.
+Оцінка НЕ повинна бути кратною 10. Рахуй точно по критеріях — наприклад 57, 63, 71, 84.
+Якщо щось вже добре — дай за це максимальні бали! Бали мають бути реалістичними.
+
+Аналізуй: шапку профілю, фото, highlights, стиль постів, відповідність цілям та СФЕРІ користувача.
+Враховуй сферу роботи — давай специфічні поради саме для цієї ніші б'юті-індустрії.
+Давай конкретні рекомендації — без води, але у м'якому тоні.
+Зон росту 3-4. Ready_to_copy — мінімум 2 пункти.`;
+
+    const SYSTEM_PROMPT_USERNAME = `Ти — дружній ментор з Instagram-маркетингу для б'юті-майстрів від Bless Academy.
 Тобі дають Instagram нікнейм (без скріншота). Проаналізуй нік та дай рекомендації.
+Твій стиль — підтримуючий, теплий, рекомендаційний. Ти НЕ критикуєш, а підказуєш.
 
 Аналізуй:
-- Чи запам'ятовується нік? Чи відповідає ніші?
-- Як можна покращити сторінку виходячи з відповідей користувача.
+- Чи запам'ятовується нік? Чи відповідає ніші? (Похвали якщо нік гарний!)
+- Як можна підсилити сторінку виходячи з відповідей користувача.
 - Що зробити першим ділом щоб покращити профіль.
 - Контент-стратегія: які пости робити для цієї ніші.
+
+Правила тону:
+- Починай з позитиву, потім м'яко підказуй зони росту.
+- Використовуй: «рекомендуємо», «варто спробувати», «круто буде якщо», «можна підсилити».
+- Уникай: «погано», «помилка», «неправильно», «проблема».
 
 Відповідай ТІЛЬКИ у такому JSON форматі (без зайвого тексту, без markdown, без \`\`\`json обгортки):
 {
   "score": 50,
-  "score_label": "Потрібна робота",
-  "summary": "2-3 речення загального аналізу ніку та рекомендацій",
+  "score_label": "Гарний старт 🌱",
+  "summary": "2-3 речення — почни з позитиву про нік, потім м'яко підкажи що покращити",
   "problems": [
     {
-      "title": "Назва проблеми",
-      "description": "Чому це проблема (1-2 речення)",
-      "fix": "Конкретно що зробити"
+      "title": "Назва зони росту",
+      "description": "М'яке пояснення чому це важливо (1-2 речення)",
+      "fix": "Конкретна дружня рекомендація"
     }
   ],
   "ready_to_copy": [
@@ -820,12 +868,23 @@
       "text": "Готовий текст поста"
     }
   ],
-  "cta": "Хочеш розібрати профіль детально з експертом Bless Academy?"
+  "cta": "Хочеш розібрати профіль детально з експертом Bless Academy? 💖"
 }
 
-Давай максимально конкретні рекомендації — без води.
-Враховуй сферу роботи — давай специфічні поради саме для цієї ніші бьюті-індустрії.
-Проблем має бути 3-4. Ready_to_copy — мінімум 2 пункти.
+Давай конкретні рекомендації — без води, але у м'якому дружньому тоні.
+Враховуй сферу роботи — давай специфічні поради саме для цієї ніші б'юті-індустрії.
+
+СИСТЕМА ОЦІНКИ (score) — рахуй за 6 критеріїв, кожен до 17 балів (макс 100):
+1. Нік/ім'я профілю (0-17): запам'ятовується, відповідає ніші
+2. Відповідність ніші (0-17): чи зрозуміло що це б'юті-майстер
+3. Мета/стратегія (0-17): чи є чіткій напрям повідомлень
+4. Частота контенту (0-16): виходячи з відповідей
+5. Біо/CTA (0-16): опис, контакти, посилання
+6. Потенціал зростання (0-17): загальний потенціал
+
+Оцінка НЕ повинна бути кратною 10. Рахуй точно по критеріях.
+
+Зон росту 3-4. Ready_to_copy — мінімум 2 пункти.
 ВАЖЛИВО: без скріншота ти не бачиш профіль, тому зосередься на аналізі ніку, стратегії та порадах на основі відповідей.`;
 
     /* ==============================================
@@ -1055,6 +1114,17 @@
 
     /** Process uploaded file */
     function handleFile(file) {
+      // Validate file size (max 10 MB)
+      if (file.size > 10 * 1024 * 1024) {
+        showError('Файл занадто великий. Максимум — 10 МБ.');
+        return;
+      }
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        showError('Підтримуються тільки зображення (PNG, JPG).');
+        return;
+      }
+
       state.uploadedFile = file;
 
       const reader = new FileReader();
@@ -1264,18 +1334,68 @@
       const container = els.resultsContainer;
       container.innerHTML = ''; // Clear previous results
 
-      // ── Score Circle ──
-      const scoreColor = data.score < 50 ? 'red' : data.score <= 75 ? 'yellow' : 'green';
+      // ── Score Ring (SVG) ──
+      const score = Math.max(0, Math.min(100, Math.round(data.score)));
+      const scoreColor = score < 40 ? 'red' : score <= 70 ? 'yellow' : 'green';
+      const radius = 58;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (score / 100) * circumference;
+
       const scoreSection = document.createElement('div');
       scoreSection.className = 'flex flex-col items-center mb-8';
       scoreSection.innerHTML = `
-        <div class="score-circle score-${scoreColor} bg-brand-card/80 mb-3">
-          <span class="text-4xl font-extrabold">${data.score}</span>
-          <span class="text-[10px] uppercase tracking-widest text-zinc-500 mt-0.5">/100</span>
+        <div class="score-ring-container score-${scoreColor} mb-3">
+          <svg viewBox="0 0 140 140">
+            <defs>
+              <linearGradient id="grad-red" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ef4444"/>
+                <stop offset="100%" stop-color="#f97316"/>
+              </linearGradient>
+              <linearGradient id="grad-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#eab308"/>
+              </linearGradient>
+              <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#22c55e"/>
+                <stop offset="100%" stop-color="#10b981"/>
+              </linearGradient>
+            </defs>
+            <circle class="score-ring-bg" cx="70" cy="70" r="${radius}"/>
+            <circle class="score-ring-progress" cx="70" cy="70" r="${radius}"
+              stroke="var(--ring-color)"
+              stroke-dasharray="${circumference}"
+              stroke-dashoffset="${circumference}"
+              id="score-progress"/>
+          </svg>
+          <div class="score-ring-value">
+            <span class="score-number" id="score-counter">0</span>
+            <span class="text-[10px] uppercase tracking-widest text-zinc-500 mt-0.5">/100</span>
+          </div>
         </div>
         <p class="text-sm font-medium text-zinc-300">${escapeHTML(data.score_label)}</p>
       `;
       container.appendChild(scoreSection);
+
+      // Animate the ring + counter
+      requestAnimationFrame(() => {
+        const progressEl = document.getElementById('score-progress');
+        const counterEl = document.getElementById('score-counter');
+        if (progressEl) progressEl.style.strokeDashoffset = offset;
+        // Count up animation
+        let current = 0;
+        const duration = 1400;
+        const start = performance.now();
+        function tick(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          // ease-out quad
+          const eased = 1 - (1 - progress) * (1 - progress);
+          current = Math.round(eased * score);
+          if (counterEl) counterEl.textContent = current;
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      });
 
       // ── Summary Card ──
       const summaryCard = document.createElement('div');
@@ -1304,7 +1424,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
               d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
           </svg>
-          Що варто покращити
+          Зони росту
         `;
         container.appendChild(problemsHeading);
 
@@ -1386,18 +1506,19 @@
 
       const text = textEl.innerText;
 
-      navigator.clipboard.writeText(text).then(() => {
-        // Visual feedback
-        btnElement.classList.add('copied');
-        const originalText = btnElement.textContent;
-        btnElement.textContent = '✅ Скопійовано!';
+      const originalBtnText = btnElement.textContent;
 
+      function showCopied() {
+        btnElement.classList.add('copied');
+        btnElement.textContent = '✅ Скопійовано!';
         setTimeout(() => {
           btnElement.classList.remove('copied');
-          btnElement.textContent = originalText;
+          btnElement.textContent = originalBtnText;
         }, 2000);
-      }).catch(() => {
-        // Fallback for older browsers
+      }
+
+      navigator.clipboard.writeText(text).then(showCopied).catch(() => {
+        // Fallback for older browsers / insecure context
         const range = document.createRange();
         range.selectNodeContents(textEl);
         const sel = window.getSelection();
@@ -1405,11 +1526,7 @@
         sel.addRange(range);
         document.execCommand('copy');
         sel.removeAllRanges();
-
-        btnElement.textContent = '✅ Скопійовано!';
-        setTimeout(() => {
-          btnElement.textContent = '📋 Копіювати';
-        }, 2000);
+        showCopied();
       });
     }
 
