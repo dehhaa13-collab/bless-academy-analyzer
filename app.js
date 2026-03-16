@@ -546,8 +546,8 @@ els.btnBackToQuestions.addEventListener('click', () => {
    SCREEN 4 — Book CTA
    ============================================== */
 els.btnBook.addEventListener('click', () => {
-  // TODO: Replace with real booking link
-  alert('Функція запису буде додана пізніше.\nДякуємо за інтерес! 💖');
+  trackEvent('book_cta_clicked');
+  window.open('https://calendar.app.google/Ys8pd5UMBWD3jRK66', '_blank');
 });
 
 /* ==============================================
