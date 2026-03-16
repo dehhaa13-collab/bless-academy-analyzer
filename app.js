@@ -759,16 +759,19 @@ function renderResults(data) {
   `;
   container.appendChild(scoreSection);
 
-  // Animate the ring + counter (Smooth count up)
-  requestAnimationFrame(() => {
+  // Animate the ring + counter (wait for screen transition to complete before starting)
+  setTimeout(() => {
     const progressEl = document.getElementById('score-progress');
     const counterEl = document.getElementById('score-counter');
     
-    // Small delay so CSS transition kicks in smoothly
-    setTimeout(() => {
-      if (progressEl) progressEl.style.strokeDashoffset = offset;
-    }, 50);
+    // Trigger CSS transition for the ring
+    if (progressEl) {
+      // Small reflow to ensure it's calculated
+      void progressEl.getBoundingClientRect(); 
+      progressEl.style.strokeDashoffset = offset;
+    }
     
+    // JS animation for the numbers
     const duration = 3500;
     const start = performance.now();
     
@@ -780,9 +783,7 @@ function renderResults(data) {
       const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       const current = Math.round(score * easeOutExpo);
       
-      if (counterEl) {
-        counterEl.textContent = current;
-      }
+      if (counterEl) counterEl.textContent = current;
       
       if (progress < 1) {
         requestAnimationFrame(tick);
@@ -792,7 +793,7 @@ function renderResults(data) {
       }
     }
     requestAnimationFrame(tick);
-  });
+  }, 450); // 350ms for screen transition + 100ms buffer
 
   // ── Summary Card ──
   const summaryCard = document.createElement('div');
