@@ -769,7 +769,7 @@ function renderResults(data) {
       if (progressEl) progressEl.style.strokeDashoffset = offset;
     }, 50);
     
-    const duration = 2000;
+    const duration = 3500;
     const start = performance.now();
     
     function tick(now) {

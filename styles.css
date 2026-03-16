@@ -259,7 +259,7 @@ body {
   fill: none;
   stroke-width: 8;
   stroke-linecap: round;
-  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: stroke-dashoffset 3.5s cubic-bezier(0.19, 1, 0.22, 1);
   filter: drop-shadow(0 0 6px var(--ring-glow));
   animation: glowPulse 3s ease-in-out infinite;
 }
