@@ -318,6 +318,126 @@
       opacity: 0;
     }
 
+    /* ========== Result sections — premium glassmorphism ========== */
+    .result-section-card {
+      background: linear-gradient(135deg, rgba(30,30,35,0.9), rgba(20,20,25,0.95));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .result-section-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244,114,182,0.3), rgba(192,132,252,0.3), transparent);
+    }
+
+    /* Section heading with gradient icon bg */
+    .result-heading {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #e4e4e7;
+    }
+    .result-heading-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    /* Staggered block animation */
+    .result-block {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeSectionIn 0.5s ease forwards;
+    }
+    @keyframes fadeSectionIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Content idea card hover */
+    .content-idea-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .content-idea-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    /* Hashtag chip */
+    .hash-chip {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 0.375rem 0.875rem;
+      border-radius: 9999px;
+      background: rgba(15,15,15,0.8);
+      color: #c084fc;
+      border: 1px solid rgba(192,132,252,0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      flex-shrink: 0;
+    }
+    .hash-chip:hover {
+      background: rgba(244,114,182,0.1);
+      color: #f472b6;
+      border-color: rgba(244,114,182,0.35);
+      transform: scale(1.05);
+    }
+
+    /* Score ring glow pulse */
+    @keyframes glowPulse {
+      0%, 100% { filter: drop-shadow(0 0 8px var(--ring-glow)); }
+      50% { filter: drop-shadow(0 0 18px var(--ring-glow)); }
+    }
+    .score-ring-progress {
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    /* Ready-to-copy card */
+    .copy-card {
+      background: linear-gradient(135deg, rgba(30,30,35,0.9), rgba(20,20,25,0.95));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s ease;
+    }
+    .copy-card:hover {
+      border-color: rgba(244,114,182,0.2);
+    }
+    .copy-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244,114,182,0.2), transparent);
+    }
+
+    /* Score label */
+    .score-label-text {
+      background: linear-gradient(135deg, #f472b6, #c084fc);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+    }
+
     /* ========== Tab Switcher ========== */
     .input-tab {
       color: #71717a;
@@ -1555,7 +1675,7 @@ JSON (без markdown, без \`\`\`json):
             <span class="text-[10px] uppercase tracking-widest text-zinc-500 mt-0.5">/100</span>
           </div>
         </div>
-        <p class="text-sm font-medium text-zinc-300">${escapeHTML(data.score_label)}</p>
+        <p class="score-label-text text-sm mt-1">${escapeHTML(data.score_label)}</p>
       `;
       container.appendChild(scoreSection);
 
@@ -1564,14 +1684,12 @@ JSON (без markdown, без \`\`\`json):
         const progressEl = document.getElementById('score-progress');
         const counterEl = document.getElementById('score-counter');
         if (progressEl) progressEl.style.strokeDashoffset = offset;
-        // Count up animation
         let current = 0;
         const duration = 1400;
         const start = performance.now();
         function tick(now) {
           const elapsed = now - start;
           const progress = Math.min(elapsed / duration, 1);
-          // ease-out quad
           const eased = 1 - (1 - progress) * (1 - progress);
           current = Math.round(eased * score);
           if (counterEl) counterEl.textContent = current;
@@ -1582,161 +1700,177 @@ JSON (без markdown, без \`\`\`json):
 
       // ── Summary Card ──
       const summaryCard = document.createElement('div');
-      summaryCard.className = 'result-card rounded-2xl p-[1px] mb-6';
+      summaryCard.className = 'result-section-card mb-6 result-block';
+      summaryCard.style.animationDelay = '0.1s';
       summaryCard.innerHTML = `
-        <div class="result-card-inner p-5 sm:p-6 rounded-[14px]">
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-pink/20 to-brand-purple/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <svg class="w-4 h-4 text-brand-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                  d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-              </svg>
-            </div>
-            <p class="text-sm text-zinc-300 leading-relaxed">${escapeHTML(data.summary)}</p>
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-pink/20 to-brand-purple/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4 text-brand-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+            </svg>
           </div>
+          <p class="text-sm text-zinc-300 leading-relaxed">${escapeHTML(data.summary)}</p>
         </div>
       `;
       container.appendChild(summaryCard);
 
       // ── Problems Section ──
       if (data.problems && data.problems.length > 0) {
-        const problemsHeading = document.createElement('h3');
-        problemsHeading.className = 'text-sm font-semibold text-zinc-200 mb-4 flex items-center gap-2';
-        problemsHeading.innerHTML = `
-          <svg class="w-4 h-4 text-brand-rose" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-          </svg>
+        const problemsBlock = document.createElement('div');
+        problemsBlock.className = 'mb-8 result-block';
+        problemsBlock.style.animationDelay = '0.2s';
+
+        const heading = document.createElement('div');
+        heading.className = 'result-heading';
+        heading.innerHTML = `
+          <div class="result-heading-icon" style="background:linear-gradient(135deg,rgba(244,114,182,0.15),rgba(239,68,68,0.15))">⚡</div>
           Зони росту
         `;
-        container.appendChild(problemsHeading);
-
-        const problemsGrid = document.createElement('div');
-        problemsGrid.className = 'space-y-3 mb-8';
+        problemsBlock.appendChild(heading);
 
         data.problems.forEach((problem, i) => {
           const card = document.createElement('div');
-          card.className = 'problem-card bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50';
-          card.style.animationDelay = `${i * 0.1}s`;
+          card.className = 'result-section-card mb-3 problem-card';
+          card.style.animationDelay = `${0.25 + i * 0.1}s`;
           card.innerHTML = `
             <div class="flex items-start gap-3 mb-2.5">
-              <span class="text-brand-pink font-bold text-lg leading-none mt-0.5">${String(i + 1).padStart(2, '0')}</span>
+              <span style="background:linear-gradient(135deg,#f472b6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;font-size:1.1rem;line-height:1;margin-top:2px">${String(i + 1).padStart(2, '0')}</span>
               <h4 class="font-semibold text-sm text-white">${escapeHTML(problem.title)}</h4>
             </div>
             <p class="text-xs text-zinc-400 leading-relaxed mb-3 ml-9">${escapeHTML(problem.description)}</p>
-            <div class="ml-9 bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
+            <div class="ml-9 rounded-xl p-3" style="background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(16,185,129,0.05));border:1px solid rgba(34,197,94,0.15)">
               <p class="text-xs text-emerald-400 leading-relaxed">
                 <span class="font-semibold">✅ Як виправити:</span> ${escapeHTML(problem.fix)}
               </p>
             </div>
           `;
-          problemsGrid.appendChild(card);
+          problemsBlock.appendChild(card);
         });
-
-        container.appendChild(problemsGrid);
+        container.appendChild(problemsBlock);
       }
 
       // ── Action Plan Section ──
       if (data.action_plan && data.action_plan.length > 0) {
-        const planHeading = document.createElement('h3');
-        planHeading.className = 'text-sm font-semibold text-zinc-200 mb-4 flex items-center gap-2';
-        planHeading.innerHTML = `
-          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+        const planBlock = document.createElement('div');
+        planBlock.className = 'mb-8 result-block';
+        planBlock.style.animationDelay = '0.4s';
+
+        const heading = document.createElement('div');
+        heading.className = 'result-heading';
+        heading.innerHTML = `
+          <div class="result-heading-icon" style="background:linear-gradient(135deg,rgba(34,197,94,0.15),rgba(16,185,129,0.15))">✅</div>
           Твій план дій
         `;
-        container.appendChild(planHeading);
+        planBlock.appendChild(heading);
 
         const planCard = document.createElement('div');
-        planCard.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50 mb-8';
+        planCard.className = 'result-section-card';
         const timeLabels = ['🔥 Сьогодні', '📅 Цей тиждень', '🎯 Цей місяць'];
-        const timeColors = ['text-red-400', 'text-yellow-400', 'text-emerald-400'];
+        const timeBgs = [
+          'background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(249,115,22,0.05))',
+          'background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(234,179,8,0.05))',
+          'background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(16,185,129,0.05))'
+        ];
+        const timeColors = ['color:#f87171', 'color:#fbbf24', 'color:#4ade80'];
         planCard.innerHTML = data.action_plan.map((step, i) => `
-          <div class="flex items-start gap-3 ${i > 0 ? 'mt-4 pt-4 border-t border-brand-border/30' : ''}">
-            <span class="text-xs font-bold ${timeColors[i] || 'text-zinc-400'} whitespace-nowrap mt-0.5">${timeLabels[i] || '📌'}</span>
+          <div class="flex items-start gap-3 ${i > 0 ? 'mt-3 pt-3' : ''}" style="${i > 0 ? 'border-top:1px solid rgba(255,255,255,0.05)' : ''}">
+            <span class="text-[10px] font-bold whitespace-nowrap mt-1 px-2 py-1 rounded-lg" style="${timeBgs[i] || ''};${timeColors[i] || 'color:#a1a1aa'}">${timeLabels[i] || '📌'}</span>
             <p class="text-sm text-zinc-300 leading-relaxed">${escapeHTML(step)}</p>
           </div>
         `).join('');
-        container.appendChild(planCard);
+        planBlock.appendChild(planCard);
+        container.appendChild(planBlock);
       }
 
       // ── Content Ideas Section ──
       if (data.content_ideas && data.content_ideas.length > 0) {
-        const ideasHeading = document.createElement('h3');
-        ideasHeading.className = 'text-sm font-semibold text-zinc-200 mb-4 flex items-center gap-2';
-        ideasHeading.innerHTML = `
-          <svg class="w-4 h-4 text-brand-pink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
-          </svg>
+        const ideasBlock = document.createElement('div');
+        ideasBlock.className = 'mb-8 result-block';
+        ideasBlock.style.animationDelay = '0.5s';
+
+        const heading = document.createElement('div');
+        heading.className = 'result-heading';
+        heading.innerHTML = `
+          <div class="result-heading-icon" style="background:linear-gradient(135deg,rgba(244,114,182,0.15),rgba(192,132,252,0.15))">💡</div>
           Ідеї контенту для тебе
         `;
-        container.appendChild(ideasHeading);
+        ideasBlock.appendChild(heading);
 
-        const ideasGrid = document.createElement('div');
-        ideasGrid.className = 'space-y-3 mb-8';
         const formatEmojis = { 'Reels': '🎬', 'Карусель': '📸', 'Сторіз': '📱' };
-        const formatColors = { 'Reels': 'from-brand-pink/20 to-purple-500/20 border-brand-pink/30', 'Карусель': 'from-blue-500/20 to-cyan-500/20 border-blue-500/30', 'Сторіз': 'from-amber-500/20 to-orange-500/20 border-amber-500/30' };
+        const formatGrads = {
+          'Reels': 'linear-gradient(135deg,rgba(244,114,182,0.12),rgba(168,85,247,0.08))',
+          'Карусель': 'linear-gradient(135deg,rgba(59,130,246,0.12),rgba(6,182,212,0.08))',
+          'Сторіз': 'linear-gradient(135deg,rgba(245,158,11,0.12),rgba(249,115,22,0.08))'
+        };
+        const formatBorders = {
+          'Reels': 'rgba(244,114,182,0.2)',
+          'Карусель': 'rgba(59,130,246,0.2)',
+          'Сторіз': 'rgba(245,158,11,0.2)'
+        };
 
         data.content_ideas.forEach(item => {
           const card = document.createElement('div');
-          const colorClass = formatColors[item.format] || 'from-brand-pink/20 to-brand-purple/20 border-brand-border/50';
-          card.className = `bg-gradient-to-br ${colorClass} rounded-xl p-4 sm:p-5 border`;
+          card.className = 'content-idea-card mb-3';
+          const bg = formatGrads[item.format] || formatGrads['Reels'];
+          const bc = formatBorders[item.format] || formatBorders['Reels'];
+          card.style.cssText = `background:${bg};border:1px solid ${bc};border-radius:16px;padding:1.25rem;position:relative;overflow:hidden`;
           card.innerHTML = `
+            <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,${bc},transparent)"></div>
             <div class="flex items-center gap-2 mb-2">
-              <span class="text-base">${formatEmojis[item.format] || '📌'}</span>
-              <span class="text-xs font-bold text-white uppercase tracking-widest">${escapeHTML(item.format)}</span>
+              <span class="text-lg">${formatEmojis[item.format] || '📌'}</span>
+              <span class="text-[10px] font-bold text-white uppercase tracking-[0.15em]">${escapeHTML(item.format)}</span>
             </div>
             <p class="text-sm text-zinc-200 leading-relaxed">${escapeHTML(item.idea)}</p>
           `;
-          ideasGrid.appendChild(card);
+          ideasBlock.appendChild(card);
         });
-
-        container.appendChild(ideasGrid);
+        container.appendChild(ideasBlock);
       }
 
       // ── Hashtags Section ──
       if (data.hashtags && data.hashtags.length > 0) {
-        const hashHeading = document.createElement('h3');
-        hashHeading.className = 'text-sm font-semibold text-zinc-200 mb-4 flex items-center gap-2';
-        hashHeading.innerHTML = `
-          <span class="text-brand-purple text-base">#</span>
+        const hashBlock = document.createElement('div');
+        hashBlock.className = 'mb-8 result-block';
+        hashBlock.style.animationDelay = '0.6s';
+
+        const heading = document.createElement('div');
+        heading.className = 'result-heading';
+        heading.innerHTML = `
+          <div class="result-heading-icon" style="background:linear-gradient(135deg,rgba(192,132,252,0.15),rgba(139,92,246,0.15))">#</div>
           Хештеги для твоєї ніші
         `;
-        container.appendChild(hashHeading);
+        hashBlock.appendChild(heading);
 
         const hashCard = document.createElement('div');
-        hashCard.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50 mb-8';
-        hashCard.style.overflow = 'hidden';
+        hashCard.className = 'result-section-card';
         const hashContent = document.createElement('div');
-        hashContent.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;max-width:100%';
+        hashContent.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;max-width:100%';
         data.hashtags.forEach(tag => {
           const chip = document.createElement('span');
-          chip.className = 'text-xs bg-brand-dark/80 text-brand-purple border border-brand-border/30 rounded-full px-3 py-1.5 cursor-pointer hover:bg-brand-pink/10 hover:text-brand-pink hover:border-brand-pink/30 transition-all';
-          chip.style.cssText = 'display:inline-block;max-width:100%;overflow-wrap:break-word;flex-shrink:0';
+          chip.className = 'hash-chip';
           chip.textContent = tag;
           hashContent.appendChild(chip);
         });
         hashCard.appendChild(hashContent);
 
-        // Copy all hashtags button
         const allHashtags = data.hashtags.join(' ');
         const copyHashBtn = document.createElement('button');
         copyHashBtn.type = 'button';
-        copyHashBtn.className = 'copy-btn text-xs text-brand-purple font-medium px-3 py-1.5 rounded-lg border border-brand-purple/30 hover:bg-brand-purple/10 transition-all';
+        copyHashBtn.className = 'copy-btn text-xs font-medium px-4 py-2 rounded-xl transition-all';
+        copyHashBtn.style.cssText = 'background:linear-gradient(135deg,rgba(192,132,252,0.1),rgba(139,92,246,0.05));border:1px solid rgba(192,132,252,0.2);color:#c084fc';
         copyHashBtn.textContent = '📋 Копіювати всі хештеги';
         copyHashBtn.addEventListener('click', function() {
           navigator.clipboard.writeText(allHashtags).then(() => {
             copyHashBtn.textContent = '✅ Скопійовано!';
-            copyHashBtn.classList.add('copied');
+            copyHashBtn.style.borderColor = 'rgba(34,197,94,0.3)';
+            copyHashBtn.style.color = '#4ade80';
             setTimeout(() => {
               copyHashBtn.textContent = '📋 Копіювати всі хештеги';
-              copyHashBtn.classList.remove('copied');
+              copyHashBtn.style.borderColor = 'rgba(192,132,252,0.2)';
+              copyHashBtn.style.color = '#c084fc';
             }, 2000);
           }).catch(() => {
-            // Fallback
             const ta = document.createElement('textarea');
             ta.value = allHashtags;
             document.body.appendChild(ta);
@@ -1748,45 +1882,44 @@ JSON (без markdown, без \`\`\`json):
           });
         });
         hashCard.appendChild(copyHashBtn);
-        container.appendChild(hashCard);
+        hashBlock.appendChild(hashCard);
+        container.appendChild(hashBlock);
       }
 
       // ── Ready-to-Copy Section ──
       if (data.ready_to_copy && data.ready_to_copy.length > 0) {
-        const copyHeading = document.createElement('h3');
-        copyHeading.className = 'text-sm font-semibold text-zinc-200 mb-4 flex items-center gap-2';
-        copyHeading.innerHTML = `
-          <svg class="w-4 h-4 text-brand-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15a2.25 2.25 0 0 1 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
-          </svg>
+        const copyBlock = document.createElement('div');
+        copyBlock.className = 'mb-6 result-block';
+        copyBlock.style.animationDelay = '0.7s';
+
+        const heading = document.createElement('div');
+        heading.className = 'result-heading';
+        heading.innerHTML = `
+          <div class="result-heading-icon" style="background:linear-gradient(135deg,rgba(244,114,182,0.15),rgba(192,132,252,0.15))">📋</div>
           Готові тексти — копіюй і вставляй
         `;
-        container.appendChild(copyHeading);
-
-        const copyGrid = document.createElement('div');
-        copyGrid.className = 'space-y-3 mb-6';
+        copyBlock.appendChild(heading);
 
         data.ready_to_copy.forEach((item, i) => {
           const card = document.createElement('div');
-          card.className = 'bg-brand-card/70 rounded-xl p-4 sm:p-5 border border-brand-border/50';
+          card.className = 'copy-card mb-3';
           card.innerHTML = `
-            <p class="text-xs font-semibold text-brand-pink mb-2.5">${escapeHTML(item.label)}</p>
-            <div class="bg-brand-dark/80 rounded-lg p-3 mb-3 border border-brand-border/30">
+            <p class="text-xs font-semibold mb-2.5" style="background:linear-gradient(135deg,#f472b6,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent">${escapeHTML(item.label)}</p>
+            <div class="rounded-xl p-3.5 mb-3" style="background:rgba(10,10,10,0.6);border:1px solid rgba(255,255,255,0.04)">
               <p class="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap" id="copy-text-${i}">${escapeHTML(item.text)}</p>
             </div>
             <button
               type="button"
-              class="copy-btn text-xs text-brand-pink font-medium px-3 py-1.5 rounded-lg border border-brand-pink/30 hover:bg-brand-pink/10 transition-all"
+              class="copy-btn text-xs font-medium px-4 py-2 rounded-xl transition-all"
+              style="background:linear-gradient(135deg,rgba(244,114,182,0.1),rgba(192,132,252,0.05));border:1px solid rgba(244,114,182,0.2);color:#f472b6"
               onclick="copyToClipboard(${i}, this)"
             >
               📋 Копіювати
             </button>
           `;
-          copyGrid.appendChild(card);
+          copyBlock.appendChild(card);
         });
-
-        container.appendChild(copyGrid);
+        container.appendChild(copyBlock);
       }
 
       // ── CTA text from AI ──
