@@ -759,7 +759,7 @@ function renderResults(data) {
   `;
   container.appendChild(scoreSection);
 
-  // Animate the ring + counter (Slot machine effect)
+  // Animate the ring + counter (Smooth count up)
   requestAnimationFrame(() => {
     const progressEl = document.getElementById('score-progress');
     const counterEl = document.getElementById('score-counter');
@@ -776,15 +776,12 @@ function renderResults(data) {
       const elapsed = now - start;
       const progress = Math.min(elapsed / duration, 1);
       
-      if (progress < 0.7) {
-        // "Slot machine" phase: rapid random updates
-        if (counterEl) counterEl.textContent = Math.floor(Math.random() * 40) + 40;
-      } else {
-        // Easing to the final target
-        const easeProgress = (progress - 0.7) / 0.3;
-        const eased = 1 - Math.pow(1 - easeProgress, 3);
-        const current = Math.round(score * 0.5 + (score * 0.5) * eased);
-        if (counterEl) counterEl.textContent = current;
+      // Smooth ease-out exponential function
+      const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const current = Math.round(score * easeOutExpo);
+      
+      if (counterEl) {
+        counterEl.textContent = current;
       }
       
       if (progress < 1) {
